@@ -1,41 +1,33 @@
-# Compiled Lua sources
-luac.out
+local Tool = Instance.new("Tool")
+Tool.Name = "TeleportTool"
+Tool.RequiresHandle = false
+Tool.Parent = game.Players.LocalPlayer:WaitForChild("Backpack")
 
-# luarocks build files
-*.src.rock
-*.zip
-*.tar.gz
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local Mouse = Player:GetMouse()
 
-# Object files
-*.o
-*.os
-*.ko
-*.obj
-*.elf
+local teleportEnabled = false
 
-# Precompiled Headers
-*.gch
-*.pch
+local function teleportToPosition(position)
+    local character = Player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        character.HumanoidRootPart.CFrame = CFrame.new(position)
+    end
+end
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-*.def
-*.exp
+Tool.Equipped:Connect(function()
+    teleportEnabled = true
+end)
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+Tool.Unequipped:Connect(function()
+    teleportEnabled = false
+end)
 
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
+Mouse.Button1Down:Connect(function()
+    if teleportEnabled then
+        local targetPosition = Mouse.Hit.p
+        teleportToPosition(targetPosition)
+    end
+end)
